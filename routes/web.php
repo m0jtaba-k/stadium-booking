@@ -20,7 +20,13 @@ Route::resource('stadiums', StadiumController::class)->only(['index', 'show']);
 // Authentication routes
 Auth::routes();
 
-Route::get('/stadiums/create', [StadiumController::class, 'create'])->name('stadiums.create');
+// Admin-only routes
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+    Route::resource('users', UserController::class)->except(['show']);
+    Route::get('stadiums', [StadiumController::class, 'adminIndex'])->name('admin.stadiums.index');
+    Route::delete('stadiums/{stadium}', [StadiumController::class, 'adminDestroy'])->name('admin.stadiums.destroy');
+});
+
 // Authenticated user routes
 Route::middleware(['auth'])->group(function () {
     // Stadium Management (Available to all authenticated users)
@@ -31,9 +37,6 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('bookings', BookingController::class);
     Route::resource('ratings', RatingController::class);
 
-    // Admin-only routes
-    Route::middleware(['role:admin'])->group(function () {
-        Route::resource('users', UserController::class);
-        Route::get('/admin/stadiums', [StadiumController::class, 'index'])->name('admin.stadiums.index');
-    });
+    // Stadium management (users can manage their own stadiums)
+    Route::resource('stadiums', StadiumController::class)->except(['index', 'show']);
 });
