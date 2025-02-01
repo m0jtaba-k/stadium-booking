@@ -32,7 +32,10 @@ public function index(Request $request)
 
 public function create()
 {
-    return view('stadiums.create');
+    $this->authorize('create', Stadium::class);
+    return view('stadiums.create', [
+        'stadium' => new Stadium() // Optional: pass empty model for form binding
+    ]);
 }
 
 public function store(Request $request)

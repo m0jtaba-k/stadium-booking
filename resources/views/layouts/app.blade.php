@@ -6,24 +6,15 @@
     <title>@yield('title') - Stadium Booking</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
-        .dropdown:hover .dropdown-menu {
-            {{-- In the dropdown menu section --}}
-<div class="dropdown-menu absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 border border-gray-200">
-    <a href="{{ route('bookings.index') }}" 
-       class="block px-4 py-2 text-gray-700 hover:bg-gray-50">
-        My Bookings
-    </a>
-    <a href="{{ route('stadiums.index') }}?my_stadiums=1" 
-       class="block px-4 py-2 text-gray-700 hover:bg-gray-50">
-        My Stadiums
-    </a>
-    <form method="POST" action="{{ route('logout') }}">
-        @csrf
-        <button type="submit" class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50">
-            Log Out
-        </button>
-    </form>
-</div>
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            z-index: 1000;
+            min-width: 160px;
+        }
+        .show-dropdown {
+            display: block !important;
         }
     </style>
 </head>
@@ -45,25 +36,34 @@
                     </div>
                 </div>
 
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center">
                     @auth
-                        <div class="relative dropdown">
-                            <button class="flex items-center space-x-1 group">
-                                <span class="text-gray-600 group-hover:text-gray-900">{{ Auth::user()->name }}</span>
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="relative">
+                            <button onclick="toggleDropdown()" class="flex items-center space-x-2 px-4 py-2 border-2 border-gray-300 rounded-lg hover:border-blue-500 hover:bg-gray-50">
+                                <span class="text-gray-700 font-medium">{{ Auth::user()->name }}</span>
+                                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                                 </svg>
                             </button>
-                            <div class="dropdown-menu absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 border border-gray-200">
+                            
+                            {{-- Dropdown Menu --}}
+                            <div id="userDropdown" class="dropdown-content bg-white rounded-lg shadow-xl mt-2 py-2 w-48 border border-gray-200">
+                                <a href="{{ route('bookings.index') }}" class="block px-4 py-3 text-gray-700 hover:bg-gray-100 text-sm font-medium">My Bookings</a>
+                                <a href="{{ route('stadiums.index') }}?my_stadiums=1" class="block px-4 py-3 text-gray-700 hover:bg-gray-100 text-sm font-medium">My Stadiums</a>
+                                <div class="border-t my-2"></div>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
-                                    <button type="submit" class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50">Logout</button>
+                                    <button type="submit" class="block w-full text-left px-4 py-3 text-gray-700 hover:bg-gray-100 text-sm font-medium">
+                                        Log Out
+                                    </button>
                                 </form>
                             </div>
                         </div>
                     @else
-                        <a href="{{ route('login') }}" class="text-gray-600 hover:text-gray-900 px-3 py-2">Login</a>
-                        <a href="{{ route('register') }}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Register</a>
+                        <div class="flex space-x-4">
+                            <a href="{{ route('login') }}" class="text-gray-600 hover:text-gray-900 px-3 py-2">Login</a>
+                            <a href="{{ route('register') }}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Register</a>
+                        </div>
                     @endauth
                 </div>
             </div>
@@ -93,14 +93,22 @@
     </main>
 
     <script>
-        // Close dropdowns when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.dropdown')) {
-                document.querySelectorAll('.dropdown-menu').forEach(function(menu) {
-                    menu.style.display = 'none';
-                });
+        function toggleDropdown() {
+            document.getElementById('userDropdown').classList.toggle('show-dropdown');
+        }
+
+        // Close dropdown when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.matches('button')) {
+                const dropdowns = document.getElementsByClassName("dropdown-content");
+                for (let i = 0; i < dropdowns.length; i++) {
+                    const openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show-dropdown')) {
+                        openDropdown.classList.remove('show-dropdown');
+                    }
+                }
             }
-        });
+        }
     </script>
 </body>
 </html>

@@ -15,7 +15,7 @@
                         <label for="name" class="block text-sm font-medium text-gray-700">Stadium Name</label>
                         <input type="text" name="name" id="name" 
                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                               required>
+                               required autofocus>
                         @error('name')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
@@ -55,7 +55,7 @@
 
                     <div class="mt-6">
                         <button type="submit" 
-                                class="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700">
+                                class="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors">
                             Create Stadium
                         </button>
                     </div>

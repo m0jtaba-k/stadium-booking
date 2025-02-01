@@ -7,20 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Booking extends Model
 {
-    use HasFactory;
-
-    protected $fillable = [
-        'user_id',
-        'stadium_id',
-        'start_time',
-        'end_time'
+    protected $casts = [
+        'start_time' => 'datetime',
+        'end_time' => 'datetime',
     ];
 
-    protected $dates = [
-        'start_time',
-        'end_time'
-    ];
-
+    // Add these relationships
     public function user()
     {
         return $this->belongsTo(User::class);
